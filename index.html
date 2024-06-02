@@ -65,7 +65,7 @@
         
         /* Main Content Styles */
         main {
-            padding: 2em;
+            padding: 1em;
         }
         
         .section-title {
@@ -141,31 +141,6 @@
         </nav>
     </header>
     <main>
-        <!-- Main content goes here -->
-    </main>
-
-    <script>
-        function toggleMenu() {
-            var menu = document.querySelector('.menu');
-            if (menu.style.display === 'block' || menu.style.display === '') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'block';
-            }
-        }
-
-        window.addEventListener('resize', function() {
-            var menu = document.querySelector('.menu');
-            if (window.innerWidth >= 769) {
-                menu.style.display = 'flex';
-            } else {
-                menu.style.display = 'none';
-            }
-        });
-    </script>
-</body>
-</html>
-    <main>
         <section id="aboutme">
             <div class="section-content">
                 <h2 class="section-title">About Me</h2>
@@ -196,5 +171,26 @@
         </section>
         </section>
     </main>
+    <script>
+        function toggleMenu() {
+            var menu = document.querySelector('.menu');
+            if (menu.style.display === 'block' || menu.style.display === '') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            var menu = document.querySelector('.menu');
+            if (window.innerWidth >= 769) {
+                menu.style.display = 'flex';
+            } else {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
 </body>
 </html>
