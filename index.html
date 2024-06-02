@@ -3,36 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yoni Xiong</title>
+    <title>YX - Personal Website</title>
+    <style>
+        /* Reset CSS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            margin-right: auto; /* Pushes the title to the left */
+        }
+        
+        header nav {
+            margin-left: auto; /* Pushes the nav links to the right */
+        }
+        
+        header nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1em;
+            font-weight: bold;
+        }
+        
+        header nav a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Main Content Styles */
+        main {
+            padding: 2em;
+        }
+        
+        .section-title {
+            font-size: 2em;
+            margin-bottom: 1em;
+            color: #333;
+        }
+        
+        .section-content {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+        
+        .cv-link {
+            display: inline-block;
+            padding: 1em 2em;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .cv-link:hover {
+            background-color: #333;
+        }
+
+        /* Right-align text */
+        .justify-align {
+            text-align: justify;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to my personal website</h1>
+        <h2>Yoni Xiong</h2>
+        <nav>
+            <a href="#aboutme">About Me</a>
+            <a href="#publications">Publications</a>
+            <a href="#projects">Personal Projects</a>
+            <a href="#cv">Curriculum Vitae</a>
+        </nav>
     </header>
 
-    <nav>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Portfolio</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">Google Scholar</a></li>
-        </ul>
-    </nav>
-
-    <section>
-        <h2>About Me</h2>
-        <p>Insert your introduction here.</p>
-    </section>
-
-    <footer>
-        <p>Connect with me:</p>
-        <ul>
-            <li><a href="https://www.linkedin.com/in/yonixiong/">LinkedIn</a></li> 
-            <li><a href="https://scholar.google.com/citations?user=wMYc-UAAAAAJ&hl=en">Google Scholar</a></li>
-        </ul>
-    </footer>
+    <main>
+        <section id="aboutme">
+            <div class="section-content">
+                <h2 class="section-title">About Me</h2>
+                <p class="justify-align">
+                    Hi! Welcome to my website. I am a Electrical Engineering PhD student at Vanderbilt University. My research is focused on radiation effects and reliability on microelectronics. I specifically evaulate single event effects (SEE) on highly advanced technology nodes like the 3-nm bulk FinFET CMOS node. Please check out my <a href="https://www.linkedin.com/in/yonixiong" target="_blank">LinkedIn</a> if you are interested in connecting!
+                </p>
+            </div>
+        <section id="publications">
+            <div class="section-content">
+                <h2 class="section-title">Publications</h2>
+                <p class="justify-align">
+                    See my Google Scholar profile for a complete list of publications.</p>
+                    <iframe src="https://scholar.google.com/citations?user=wMYc-UAAAAAJ&hl=en" width="100%" height="600px" style="border: none;"></iframe>
+            </div>
+        </section>
+        <section id="projects">
+            <div class="section-content">
+                <h2 class="section-title">Personal Projects</h2>
+                <p class="justify-align">
+                    No current projects to showcase.</p>
+            </div>
+        <section id="cv">
+            <div class="section-content">
+                <h2 class="section-title">Curriculum Vitae</h2>
+                <iframe src="your_cv.pdf" width="100%" height="600px" style="border: none;"></iframe>
+            </div>
+        </section>
+        </section>
+    </main>
 </body>
 </html>
