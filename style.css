@@ -26,3 +26,14 @@
 .project-details p {
     margin: 0.5rem 0;
 }
+
+.publication-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem; /* space between columns */
+}
+
+.publication-item {
+    line-height: 1.5;
+    text-align: left;
+}
