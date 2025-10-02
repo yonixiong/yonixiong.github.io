@@ -1,0 +1,28 @@
+.project {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.project img.project-image {
+    width: 200px;
+    height: auto;
+    border-radius: 8px;
+    margin-right: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.project-details {
+    max-width: 600px;
+}
+
+.project-details h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #333;
+    text-align: center;
+}
+
+.project-details p {
+    margin: 0.5rem 0;
+}
