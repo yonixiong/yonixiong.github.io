@@ -95,6 +95,15 @@
             <span id="stPerIn"></span> st/in ×
             <span id="rowsPerIn"></span> rows/in
         </div>
+
+        <a
+            id="chartLink"
+            href="#"
+            target="_blank"
+            style="display:none;"
+        >
+            Generate Matching Chart
+        </a>
     </div>
 </div>
 
@@ -205,11 +214,20 @@ let rowsPerInch = 0;
 let gramsPerSquareInch = 0;
 
 function calculateGauge() {
-    const stitches = parseFloat(document.getElementById('stitches').value);
-    const rows = parseFloat(document.getElementById('rows').value);
 
-    if (isNaN(stitches) || isNaN(rows) || stitches <= 0 || rows <= 0) {
-        alert('Please enter valid numbers.');
+    const stitches =
+        parseFloat(document.getElementById("stitches").value);
+
+    const rows =
+        parseFloat(document.getElementById("rows").value);
+
+    if (
+        isNaN(stitches) ||
+        isNaN(rows) ||
+        stitches <= 0 ||
+        rows <= 0
+    ) {
+        alert("Please enter valid stitch and row counts.");
         return;
     }
 
@@ -219,12 +237,31 @@ function calculateGauge() {
     stitchesPerInch = stitches / 4;
     rowsPerInch = rows / 4;
 
-    document.getElementById('stPerCm').textContent = stitchesPerCm.toFixed(2);
-    document.getElementById('rowsPerCm').textContent = rowsPerCm.toFixed(2);
-    document.getElementById('stPerIn').textContent = stitchesPerInch.toFixed(2);
-    document.getElementById('rowsPerIn').textContent = rowsPerInch.toFixed(2);
+    document.getElementById("stPerCm").textContent =
+        stitchesPerCm.toFixed(2);
 
-    document.getElementById('results').style.display = 'block';
+    document.getElementById("rowsPerCm").textContent =
+        rowsPerCm.toFixed(2);
+
+    document.getElementById("stPerIn").textContent =
+        stitchesPerInch.toFixed(2);
+
+    document.getElementById("rowsPerIn").textContent =
+        rowsPerInch.toFixed(2);
+
+    document.getElementById("results").style.display =
+        "block";
+
+    const ratio = `${stitches}:${rows}`;
+
+    const chartLink =
+        document.getElementById("chartLink");
+
+    chartLink.href =
+        `chart.html?ratio=${encodeURIComponent(ratio)}`;
+
+    chartLink.style.display =
+        "inline-block";
 }
 function convertLength() {
     const length = parseFloat(document.getElementById('length').value);

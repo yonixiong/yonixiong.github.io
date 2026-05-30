@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knitting Chart Generator</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 80px;
+}
+
+.info {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+#paper {
+    width: 816px;   /* 8.5in @96dpi */
+    height: 1056px; /* 11in @96dpi */
+    border: 2px solid #444;
+    background: white;
+    position: relative;
+}
+
+#printArea {
+    position: absolute;
+    left: 24px;
+    top: 19px;
+    width: 768px;     /* 8in @ 96dpi */
+    height: 1018px;   /* 10.6in @ 96dpi */
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+}
+
+@page {
+    size: letter;
+}
+
+@media print {
+
+    body {
+        margin: 0;
+    }
+
+    .controls,
+    .info {
+        display: none;
+    }
+
+    #paper {
+        border: none;
+        width: auto;
+        height: auto;
+    }
+
+    #printArea {
+        position: static;
+        width: 8in;
+        height: 10.6in;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="controls">
+
+    <label>
+        Aspect Ratio (stich to row ratio as length:width)
+        <input id="ratio" type="text" value="42:3">
+    </label>
+
+    <label>
+        Block Width
+        <input id="sizeSlider"
+               type="range"
+               min="5"
+               max="40"
+               value="20">
+    </label>
+
+    <span id="sizeValue">20 px</span>
+
+    <button onclick="drawGrid()">Update</button>
+
+    <button onclick="window.print()">Print</button>
+    <label>
+        Major Grid
+        <select id="majorInterval">
+            <option value="5">Every 5</option>
+            <option value="10">Every 10</option>
+        </select>
+    </label>
+
+    <label>
+        Orientation
+        <select id="orientation">
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+        </select>
+    </label>
+
+    <label>
+        <input type="checkbox" id="autoFit">
+        Auto Fit
+    </label>
+
+    <button onclick="downloadSVG()">
+        Download SVG
+    </button>
+    </div>
+
+<div class="info">
+    <span id="stats"></span>
+</div>
+
+<div id="paper">
+    <div id="printArea">
+        <svg id="chart"></svg>
+    </div>
+</div>
+
+<script>
+
+const ratioInput = document.getElementById("ratio");
+const slider = document.getElementById("sizeSlider");
+const sizeValue = document.getElementById("sizeValue");
+
+slider.addEventListener("input", () => {
+    sizeValue.textContent = slider.value + " px";
+    drawGrid();
+});
+
+ratioInput.addEventListener("input", drawGrid);
+
+function drawGrid() {
+
+    const svg = document.getElementById("chart");
+    svg.innerHTML = "";
+
+    const majorInterval =
+        parseInt(document.getElementById("majorInterval").value);
+
+    const orientation =
+        document.getElementById("orientation").value;
+
+    const autoFit =
+        document.getElementById("autoFit").checked;
+
+    let lengthRatio = 1;
+    let widthRatio = 1;
+
+    const ratioText = ratioInput.value.trim();
+
+    if (ratioText.includes(":")) {
+        const parts = ratioText.split(":");
+        lengthRatio = parseFloat(parts[0]) || 1;
+        widthRatio = parseFloat(parts[1]) || 1;
+    }
+
+    const printArea = document.getElementById("printArea");
+
+    let areaWidth = printArea.clientWidth;
+    let areaHeight = printArea.clientHeight;
+
+    if (orientation === "landscape") {
+        [areaWidth, areaHeight] =
+            [areaHeight, areaWidth];
+    }
+
+    let stitchWidth;
+    let stitchHeight;
+
+    if (autoFit) {
+
+        stitchWidth = areaWidth / 50;
+        stitchHeight =
+            stitchWidth * (lengthRatio / widthRatio);
+
+    } else {
+
+        stitchWidth = Number(slider.value);
+
+        stitchHeight =
+            stitchWidth * (lengthRatio / widthRatio);
+    }
+
+    const cols =
+        Math.floor(areaWidth / stitchWidth);
+
+    const rows =
+        Math.floor(areaHeight / stitchHeight);
+
+    const chartWidth =
+        cols * stitchWidth;
+
+    const chartHeight =
+        rows * stitchHeight;
+
+    svg.setAttribute(
+        "viewBox",
+        `-30 -30 ${areaWidth + 60} ${areaHeight + 60}`
+    );
+
+    const bg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "rect"
+    );
+
+    bg.setAttribute("width", areaWidth);
+    bg.setAttribute("height", areaHeight);
+    bg.setAttribute("fill", "white");
+
+    svg.appendChild(bg);
+
+    // Vertical grid
+
+    for (let c = 0; c <= cols; c++) {
+
+        const x = c * stitchWidth;
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+        line.setAttribute("x1", x);
+        line.setAttribute("y1", 0);
+        line.setAttribute("x2", x);
+        line.setAttribute("y2", chartHeight);
+
+        let width = 0.35;
+
+        if (c % 10 === 0) {
+            width = 1.5;
+        } else if (c % majorInterval === 0) {
+            width = 1;
+        }
+
+        line.setAttribute("stroke", "black");
+        line.setAttribute("stroke-width", width);
+
+        svg.appendChild(line);
+    }
+
+    // Horizontal grid
+
+    for (let r = 0; r <= rows; r++) {
+
+        const y = r * stitchHeight;
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+        line.setAttribute("x1", 0);
+        line.setAttribute("y1", y);
+        line.setAttribute("x2", chartWidth);
+        line.setAttribute("y2", y);
+
+        let width = 0.35;
+
+        if (r % 10 === 0) {
+            width = 1.5;
+        } else if (r % majorInterval === 0) {
+            width = 1;
+        }
+
+        line.setAttribute("stroke", "black");
+        line.setAttribute("stroke-width", width);
+
+        svg.appendChild(line);
+    }
+
+    // Column numbers
+
+    for (let c = 1; c <= cols; c++) {
+
+        if (c % majorInterval !== 0)
+            continue;
+
+        const x =
+            (c - 0.5) * stitchWidth;
+
+        ["-10"]
+            .forEach(y => {
+
+                const text =
+                    document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "text"
+                    );
+
+                text.setAttribute("x", x);
+                text.setAttribute("y", y);
+                text.setAttribute(
+                    "text-anchor",
+                    "middle"
+                );
+
+                text.setAttribute(
+                    "font-size",
+                    "8"
+                );
+
+                text.textContent = c;
+
+                svg.appendChild(text);
+            });
+    }
+
+    // Row numbers
+
+    for (let r = 1; r <= rows; r++) {
+
+        if (r % majorInterval !== 0)
+            continue;
+
+        const y =
+            (r - 0.5) * stitchHeight;
+
+        [String(chartWidth + 5)]
+            .forEach(x => {
+
+                const text =
+                    document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "text"
+                    );
+
+                text.setAttribute("x", x);
+                text.setAttribute("y", y);
+
+                text.setAttribute(
+                    "font-size",
+                    "8"
+                );
+
+                text.setAttribute(
+                    "dominant-baseline",
+                    "middle"
+                );
+
+                text.textContent = r;
+
+                svg.appendChild(text);
+            });
+    }
+
+    document.getElementById("stats")
+        .textContent =
+        `${cols} stitches × ${rows} rows`;
+}
+const params =
+    new URLSearchParams(window.location.search);
+
+const ratio =
+    params.get("ratio");
+
+if (ratio) {
+    document.getElementById("ratio").value =
+        ratio;
+}
+drawGrid();
+
+function downloadSVG() {
+
+    const svg =
+        document.getElementById("chart");
+
+    const source =
+        new XMLSerializer()
+            .serializeToString(svg);
+
+    const blob =
+        new Blob(
+            [source],
+            {type:"image/svg+xml"}
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+    a.download = "knitting-chart.svg";
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
