@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stitch Gauge Calculator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f5f5f5;
+    }
+
+    .container {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background: #45a049;
+    }
+
+    .results {
+        margin-top: 25px;
+        padding: 15px;
+        background: #eef7ee;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .result-item {
+        margin: 10px 0;
+        font-size: 18px;
+    }
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Gauge Swatch Calculator</h2>
+
+    <label for="stitches">Stitches in 10 cm or 4 in</label>
+    <input type="number" id="stitches" min="0" step="0.1">
+
+    <label for="rows">Rows in 10 cm or 4 in</label>
+    <input type="number" id="rows" min="0" step="0.1">
+
+    <button onclick="calculateGauge()">Calculate</button>
+
+    <div class="results" id="results">
+        <div class="result-item">
+            <span id="stPerCm"></span> st/cm ×
+            <span id="rowsPerCm"></span> rows/cm
+            <br>
+            <span id="stPerIn"></span> st/in ×
+            <span id="rowsPerIn"></span> rows/in
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-top:20px;">
+    <h2>Length Converter (after gauge)</h2>
+
+    <label for="length">Length</label>
+    <input type="number" id="length" min="0" step="0.1">
+
+    <label for="unit">Unit</label>
+    <select id="unit">
+        <option value="cm">Centimeters (cm)</option>
+        <option value="inch">Inches (in)</option>
+    </select>
+
+    <button onclick="convertLength()">Convert</button>
+
+    <div class="results" id="convertResults">
+        <div class="result-item">
+            <span id="neededStitches"></span> stitches or
+            <span id="neededRows"></span> rows
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-top:20px;">
+    <h2>Yarn Requirement Calculator</h2>
+
+    <label for="measurementUnit">Measurement Unit</label>
+    <select id="measurementUnit">
+        <option value="cm">Centimeters (cm)</option>
+        <option value="in">Inches (in)</option>
+    </select>
+
+    <h3>1. Swatch Measurements</h3>
+
+    <label for="swatchLength">
+        Swatch Length (<span id="unitLabel1">cm</span>)
+    </label>
+    <input type="number" id="swatchLength" min="0" step="0.1">
+
+    <label for="swatchWidth">
+        Swatch Width (<span id="unitLabel2">cm</span>)
+    </label>
+    <input type="number" id="swatchWidth" min="0" step="0.1">
+
+    <label for="swatchWeight">Swatch Weight (grams)</label>
+    <input type="number" id="swatchWeight" min="0" step="0.1">
+
+    <button onclick="calculateSwatch()">Calculate Swatch</button>
+
+    <div class="results" id="swatchResults">
+        <div class="result-item">
+            <strong>Swatch:</strong><br>
+            Area: <span id="swatchArea"></span>
+            <span id="areaUnit"></span><br>
+
+            Weight per
+            <span id="weightUnit"></span>:
+            <span id="gramsPerArea"></span> g
+        </div>
+    </div>
+
+    <h3>2. Project Measurements</h3>
+
+    <label for="projectArea">
+        Estimated Project Area (assume rectangles) (<span id="areaUnitLabel">sq cm</span>)
+    </label>
+    <input type="number" id="projectArea" min="0" step="0.01">
+
+    <button onclick="calculateYarnNeeded()">
+        Estimate Yarn Needed
+    </button>
+
+    <div class="results" id="yarnResults">
+        <div class="result-item">
+            <strong>Approx. Yarn Needed:</strong><br>
+            <span id="estimatedWeight"></span> grams
+        </div>
+    </div>
+</div>
+
+<script>
+let stitchesPerCm = 0;
+let rowsPerCm = 0;
+let stitchesPerInch = 0;
+let rowsPerInch = 0;
+let gramsPerSquareInch = 0;
+
+function calculateGauge() {
+    const stitches = parseFloat(document.getElementById('stitches').value);
+    const rows = parseFloat(document.getElementById('rows').value);
+
+    if (isNaN(stitches) || isNaN(rows) || stitches <= 0 || rows <= 0) {
+        alert('Please enter valid numbers.');
+        return;
+    }
+
+    stitchesPerCm = stitches / 10;
+    rowsPerCm = rows / 10;
+
+    stitchesPerInch = stitches / 4;
+    rowsPerInch = rows / 4;
+
+    document.getElementById('stPerCm').textContent = stitchesPerCm.toFixed(2);
+    document.getElementById('rowsPerCm').textContent = rowsPerCm.toFixed(2);
+    document.getElementById('stPerIn').textContent = stitchesPerInch.toFixed(2);
+    document.getElementById('rowsPerIn').textContent = rowsPerInch.toFixed(2);
+
+    document.getElementById('results').style.display = 'block';
+}
+function convertLength() {
+    const length = parseFloat(document.getElementById('length').value);
+    const unit = document.getElementById('unit').value;
+
+    if (stitchesPerCm === 0 || rowsPerCm === 0) {
+        alert('Please calculate the gauge first.');
+        return;
+    }
+
+    if (isNaN(length) || length <= 0) {
+        alert('Please enter a valid length.');
+        return;
+    }
+
+    let stitchesNeeded, rowsNeeded;
+
+    if (unit === 'cm') {
+        stitchesNeeded = length * stitchesPerCm;
+        rowsNeeded = length * rowsPerCm;
+    } else {
+        stitchesNeeded = length * stitchesPerInch;
+        rowsNeeded = length * rowsPerInch;
+    }
+
+    document.getElementById('neededStitches').textContent =
+        Math.round(stitchesNeeded);
+
+    document.getElementById('neededRows').textContent =
+        Math.round(rowsNeeded);
+
+    document.getElementById('convertResults').style.display = 'block';
+}
+
+let gramsPerUnitArea = 0;
+
+document
+    .getElementById('measurementUnit')
+    .addEventListener('change', updateUnitLabels);
+
+updateUnitLabels();
+
+function updateUnitLabels() {
+    const unit =
+        document.getElementById('measurementUnit').value;
+
+    const areaText =
+        unit === 'cm' ? 'sq cm' : 'sq in';
+
+    document.getElementById('unitLabel1').textContent = unit;
+    document.getElementById('unitLabel2').textContent = unit;
+    document.getElementById('areaUnitLabel').textContent = areaText;
+}
+
+function calculateSwatch() {
+    const length =
+        parseFloat(document.getElementById('swatchLength').value);
+
+    const width =
+        parseFloat(document.getElementById('swatchWidth').value);
+
+    const weight =
+        parseFloat(document.getElementById('swatchWeight').value);
+
+    const unit =
+        document.getElementById('measurementUnit').value;
+
+    if (
+        isNaN(length) || isNaN(width) || isNaN(weight) ||
+        length <= 0 || width <= 0 || weight <= 0
+    ) {
+        alert('Please enter valid measurements.');
+        return;
+    }
+
+    const area = length * width;
+
+    gramsPerUnitArea = weight / area;
+
+    const areaText =
+        unit === 'cm' ? 'sq cm' : 'sq in';
+
+    document.getElementById('swatchArea').textContent =
+        area.toFixed(2);
+
+    document.getElementById('areaUnit').textContent =
+        areaText;
+
+    document.getElementById('weightUnit').textContent =
+        areaText;
+
+    document.getElementById('gramsPerArea').textContent =
+        gramsPerUnitArea.toFixed(4);
+
+    document.getElementById('swatchResults').style.display =
+        'block';
+}
+
+function calculateYarnNeeded() {
+    const projectArea =
+        parseFloat(document.getElementById('projectArea').value);
+
+    if (gramsPerUnitArea === 0) {
+        alert('Calculate the swatch first.');
+        return;
+    }
+
+    if (isNaN(projectArea) || projectArea <= 0) {
+        alert('Enter a valid project area.');
+        return;
+    }
+
+    const yarnNeeded =
+        projectArea * gramsPerUnitArea;
+
+    document.getElementById('estimatedWeight').textContent =
+        yarnNeeded.toFixed(1);
+
+    document.getElementById('yarnResults').style.display =
+        'block';
+}
+
+</script>
+
+</body>
+</html>
